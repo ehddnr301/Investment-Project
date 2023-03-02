@@ -3,3 +3,5 @@
 hosts
 .terraform
 terraform.tfstate
+__pycache__
+*.log
