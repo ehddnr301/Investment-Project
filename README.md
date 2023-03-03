@@ -1,5 +1,10 @@
 # Investment-Project
 
+## 2023-03-03
+
+- Ansible로 구성한 kubernetes환경이 잘못되었는지 Pod Container에서 outbound에 문제가 있어 수정해야할 필요가 있을것으로 보입니다.
+- 도커 Base Image를 수정하였습니다.
+
 ## 2023-03-02
 
 - 데이터 소스로 pyupbit를 사용하였습니다.
