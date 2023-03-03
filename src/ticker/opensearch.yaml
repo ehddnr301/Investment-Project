@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: opensearch
+spec:
+  containers:
+  - name: opensearch
+    image: ehddnr/opensearch
+    ports:
+    - containerPort: 9200
+    - containerPort: 9600
+    env:
+    - name: discovery.type
+      value: "single-node"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: opensearch-service
+spec:
+  selector:
+    app: opensearch
+  ports:
+  - name: http
+    protocol: TCP
+    port: 9200
+    targetPort: 9200
+  - name: metrics
+    protocol: TCP
+    port: 9600
+    targetPort: 9600

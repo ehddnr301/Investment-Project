@@ -1,0 +1,17 @@
+# ticker pod
+apiVersion: v1
+kind: Pod
+metadata:
+  name: ticker
+spec:
+  containers:
+  - name: ticker
+    image: ehddnr/ticker:1.0.0
+    volumeMounts:
+    - name: config
+      mountPath: /fluentd/etc/fluent.conf
+      subPath: fluent.conf
+  volumes:
+  - name: config
+    configMap:
+      name: fluentd-config
