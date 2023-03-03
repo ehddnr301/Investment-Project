@@ -1,4 +1,4 @@
-FROM ticker:1.0.0
+FROM ehddnr/ticker:1.0.0
 
 USER root
 
