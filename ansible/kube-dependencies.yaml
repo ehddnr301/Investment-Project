@@ -1,6 +1,10 @@
 - hosts: all
   become: yes
   tasks:
+   - name: update apt cache
+     apt:
+       update_cache: yes
+ 
    - name: install Docker
      apt:
        name: docker.io
@@ -26,13 +30,13 @@
  
    - name: install kubelet
      apt:
-       name: kubelet=1.16.0-00
+       name: kubelet=1.19.3-00
        state: present
        update_cache: true
  
    - name: install kubeadm
      apt:
-       name: kubeadm=1.16.0-00
+       name: kubeadm=1.19.3-00
        state: present
  
 - hosts: master
@@ -40,6 +44,6 @@
   tasks:
    - name: install kubectl
      apt:
-       name: kubectl=1.16.0-00
+       name: kubectl=1.19.3-00
        state: present
        force: yes
