@@ -1,5 +1,13 @@
 # Investment-Project
 
+## 2023-03-15
+
+<img src="./static/Architecture2.png" width="40%" />
+
+- 하나의 POD에 하나의 Container안에서 모든 작업을 다 진행하는 구조에서 하나의 Pod에서 두개의 Container로 나누었습니다.
+- python으로 logging을 하는 container & fluentd로 log를 전송하는 container
+
+
 ## 2023-03-04
 
 <img src="./static/Architecture.png" width="40%" />
