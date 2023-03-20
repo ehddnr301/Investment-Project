@@ -6,7 +6,8 @@ metadata:
 spec:
   containers:
   - name: ticker
-    image: ehddnr/ticker:1.0.0
+    image: ehddnr/ticker:1.1.0
+    imagePullPolicy: Always
     volumeMounts:
     - name: logs-volume
       mountPath: /logs
