@@ -1,7 +1,10 @@
+import os
+import sys
+import json
+
 import argparse
 import datetime
 import multiprocessing as mp
-import os
 
 import pyupbit
 from loguru import logger
@@ -19,8 +22,7 @@ def delete_old_logs(log_dir, days_to_keep):
 
 
 if __name__ == "__main__":
-
-    # argparse 설정
+    # argparse settings
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--ticker", nargs="*", default=["KRW-BTC"], help="Tickers to track"
@@ -31,10 +33,11 @@ if __name__ == "__main__":
     log_dir = "logs"
     days_to_keep = 1
 
+    logger.remove()
+
     logger.add(
         os.path.join(log_dir, "logs.log"),
-        format="{time:YYYY-MM-DD HH:mm:ss} {message}",
-        serialize=True,
+        format="{message}",
         rotation="1 days",
     )
 
@@ -48,26 +51,20 @@ if __name__ == "__main__":
 
     while True:
         data = queue.get()
-        code = data["code"]
         ts = data["trade_timestamp"]
-        trade_price = data["trade_price"]
-        change = data["change"]
-        signed_change_price = data["signed_change_price"]
-        signed_change_rate = data["signed_change_rate"]
-        trade_volume = data["trade_volume"]
-
         dt = datetime.datetime.fromtimestamp(ts / 1000)
-        logger.info(
-            {
-                "datetime": str(dt),
-                "code": code,
-                "trade_price": trade_price,
-                "change": change,
-                "signed_change_price": signed_change_price,
-                "signed_change_rate": signed_change_rate,
-                "trade_volume": trade_volume,
-            }
-        )
+
+        log_data = {
+            "datetime": str(dt),
+            "code": data["code"],
+            "trade_price": data["trade_price"],
+            "change": data["change"],
+            "signed_change_price": data["signed_change_price"],
+            "signed_change_rate": data["signed_change_rate"],
+            "trade_volume": data["trade_volume"],
+        }
+        logger.info(json.dumps(log_data))
+
 
         # Check & Delete Old log files
         if dt.hour == 0 and dt.minute == 0:
