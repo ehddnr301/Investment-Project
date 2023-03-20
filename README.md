@@ -1,5 +1,9 @@
 # Investment-Project
 
+## 2023-03-20
+
+- 로깅을 간소화 했고 imagePullPolicy를 추가해 매번 이미지를 새로 당겨오도록 수정하였습니다.
+
 ## 2023-03-15
 
 <img src="./static/Architecture2.png" width="40%" />
