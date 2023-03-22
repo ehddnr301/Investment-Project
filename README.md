@@ -1,5 +1,12 @@
 # Investment-Project
 
+## 2023-03-22
+
+<img src="./static/OpenSearch_DashBoard.png" width="40%" />
+
+- OpenSearch-DashBoard를 통해 OpenSearch에 적제된 데이터를 시각화 한 모습입니다.
+- 적제된 KRW-BTC & KRW-ETH 데이터에 대해 Change값에서 RISE, FALL, EVEN 이 차지하는 비율을 PIE차트로 나타내었습니다.
+
 ## 2023-03-20
 
 - 로깅을 간소화 했고 imagePullPolicy를 추가해 매번 이미지를 새로 당겨오도록 수정하였습니다.
