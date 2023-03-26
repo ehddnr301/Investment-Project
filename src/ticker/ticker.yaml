@@ -12,7 +12,8 @@ spec:
     - name: logs-volume
       mountPath: /logs
   - name: fluentd
-    image: ehddnr/fluentd:1.0.0
+    image: ehddnr/fluentd:1.1.0
+    imagePullPolicy: Always
     volumeMounts:
     - name: logs-volume
       mountPath: /logs

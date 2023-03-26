@@ -3,7 +3,7 @@ import sys
 import json
 
 import argparse
-import datetime
+from datetime import datetime
 import multiprocessing as mp
 
 import pyupbit
@@ -11,11 +11,11 @@ from loguru import logger
 
 
 def delete_old_logs(log_dir, days_to_keep):
-    NOW = datetime.datetime.now()
+    NOW = datetime.now()
     for filename in os.listdir(log_dir):
         if filename.endswith(".log"):
             filepath = os.path.join(log_dir, filename)
-            created_time = datetime.datetime.fromtimestamp(os.path.getctime(filepath))
+            created_time = datetime.fromtimestamp(os.path.getctime(filepath))
             age_in_days = (NOW - created_time).days
             if age_in_days > days_to_keep:
                 os.remove(filepath)
@@ -51,11 +51,10 @@ if __name__ == "__main__":
 
     while True:
         data = queue.get()
-        ts = data["trade_timestamp"]
-        dt = datetime.datetime.fromtimestamp(ts / 1000)
+        dt = datetime.now()
 
         log_data = {
-            "datetime": str(dt),
+            "datetime": data["trade_timestamp"],
             "code": data["code"],
             "trade_price": data["trade_price"],
             "change": data["change"],
