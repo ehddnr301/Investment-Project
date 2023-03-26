@@ -1,5 +1,11 @@
 # Investment-Project
 
+## 2023-03-26
+
+- datetime field가 올바르게 적용되지 않고 있음을 확인하여 `ticker/main.py` 코드 변경이 있었습니다.
+- 폴더구조가 직관적이지 않아 각각으로 분리하였습니다.
+- start & terminate command를 추가하였습니다.
+
 ## 2023-03-22
 
 <img src="./static/OpenSearch_DashBoard.png" width="40%" />
