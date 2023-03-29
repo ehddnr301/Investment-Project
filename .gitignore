@@ -5,3 +5,4 @@ hosts
 terraform.tfstate
 __pycache__
 *.log
+.env
