@@ -1,5 +1,10 @@
 # Investment-Project
 
+## 2023-04-02
+
+- postgresql 을 배포하는 yaml파일이 생성되었습니다.
+- 이는 DW, airflow db 로 사용될 예정입니다. (분리하는것이 맞는것으로 보이지만 프로젝트 편의를 위해 통합)
+
 ## 2023-03-26
 
 - datetime field가 올바르게 적용되지 않고 있음을 확인하여 `ticker/main.py` 코드 변경이 있었습니다.
