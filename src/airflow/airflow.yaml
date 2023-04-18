@@ -1,0 +1,142 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: airflow-dags-pv
+spec:
+  storageClassName: nfs
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteMany
+  nfs:
+    path: /home/dongwook.test9/Investment-Project/src/airflow/dags
+    server: ${SERVER_IP}
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: airflow-dags-pvc
+spec:
+  storageClassName: nfs
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+  volumeName: airflow-dags-pv  # 사용할 PV 이름
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: airflow-webserver
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: airflow-webserver
+  template:
+    metadata:
+      labels:
+        app: airflow-webserver
+    spec:
+      initContainers:
+      - name: airflow-db-init
+        image: apache/airflow:2.4.1-python3.8
+        command: ["airflow", "db", "init"]
+        env:
+        - name: AIRFLOW__CORE__SQL_ALCHEMY_CONN
+          value: "postgresql+psycopg2://postgres:postgres@postgres-service:5432/postgres"
+      - name: airflow-users-create
+        image: apache/airflow:2.4.1-python3.8
+        command: ["airflow", "users", "create", "-u", "admin", "-p", "admin", "-r", "Admin", "-e", "admin@admin.com", "-f", "admin", "-l", "admin"]
+        env:
+        - name: AIRFLOW__CORE__SQL_ALCHEMY_CONN
+          value: "postgresql+psycopg2://postgres:postgres@postgres-service:5432/postgres"
+      containers:
+        - name: airflow-webserver
+          image: apache/airflow:2.4.1-python3.8
+          ports:
+            - name: web
+              containerPort: 8080
+          env:
+            - name: AIRFLOW__CORE__SQL_ALCHEMY_CONN
+              value: "postgresql+psycopg2://postgres:postgres@postgres-service:5432/postgres"
+          volumeMounts:
+            - mountPath: /opt/airflow/dags
+              name: dags
+          command: ["airflow"]
+          args:
+            - "webserver"
+            - "--port"
+            - "8080"
+      volumes:
+        - name: dags
+          persistentVolumeClaim:
+            claimName: airflow-dags-pvc  # 사용할 PVC 이름
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: airflow-scheduler
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: scheduler
+  template:
+    metadata:
+      labels:
+        component: scheduler
+    spec:
+      containers:
+        - name: airflow-scheduler
+          image: apache/airflow:2.4.1-python3.8
+          env:
+            - name: AIRFLOW__CORE__SQL_ALCHEMY_CONN
+              value: "postgresql+psycopg2://postgres:postgres@postgres-service:5432/postgres"
+          args:
+            - scheduler
+          volumeMounts:
+            - mountPath: /opt/airflow/dags
+              name: dags
+      volumes:
+        - name: dags
+          persistentVolumeClaim:
+            claimName: airflow-dags-pvc  # 사용할 PVC 이름
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: airflow-webserver-service
+spec:
+  type: NodePort
+  selector:
+    app: airflow-webserver
+  ports:
+    - name: http
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
+      nodePort: 30081
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: airflow-scheduler
+spec:
+  selector:
+    app: airflow-scheduler
+  ports:
+    - name: scheduler
+      protocol: TCP
+      port: 8793
