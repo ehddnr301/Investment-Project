@@ -1,0 +1,28 @@
+- hosts: master
+  become: yes
+  tasks:
+    - name: Install nfs-kernel-server
+      apt:
+        name: nfs-kernel-server
+        state: present
+
+    - name: Add export configuration
+      become: true
+      lineinfile:
+        path: /etc/exports
+        line: "/home/dongwook.test9/Investment-Project/src/airflow/dags *(rw,sync,no_subtree_check)"
+        state: present
+
+    - name: Restart nfs-kernel-server
+      become: true
+      service:
+        name: nfs-kernel-server
+        state: restarted
+
+- hosts: workers
+  become: yes
+  tasks:
+    - name: Install nfs-common
+      apt:
+        name: nfs-common
+        state: present
