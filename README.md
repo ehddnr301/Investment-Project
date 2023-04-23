@@ -4,6 +4,8 @@
 
 <img src="./static/Airflow.png" width="40%" />
 
+- Kubernetes에 Airflow Webserver와 Scheduler를 배포했습니다.
+    - dags 폴더 mount는 nfs서버를 추가하여 PersistentVolume으로 사용가능하도록 작업했습니다.
 - Airflow 는 현재 SequentialExecutor로 사용되고 있습니다.
     - 추후 config 파일을 수정해 celery executor 혹은 kubernetes executor 를 사용하려 합니다.
 
