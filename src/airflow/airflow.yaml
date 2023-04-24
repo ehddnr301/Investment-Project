@@ -29,6 +29,37 @@ spec:
 
 ---
 
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: airflow-logs-pv
+spec:
+  storageClassName: nfs
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteMany
+  nfs:
+    path: /home/dongwook.test9/Investment-Project/src/airflow/logs
+    server: ${SERVER_IP}
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: airflow-logs-pvc
+spec:
+  storageClassName: nfs
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+  volumeName: airflow-logs-pv  # 사용할 PV 이름
+
+---
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -68,6 +99,8 @@ spec:
           volumeMounts:
             - mountPath: /opt/airflow/dags
               name: dags
+            - mountPath: /opt/airflow/logs
+              name: logs
           command: ["airflow"]
           args:
             - "webserver"
@@ -77,6 +110,9 @@ spec:
         - name: dags
           persistentVolumeClaim:
             claimName: airflow-dags-pvc  # 사용할 PVC 이름
+        - name: logs
+          persistentVolumeClaim:
+            claimName: airflow-logs-pvc  # 사용할 PVC 이름
 
 ---
 
@@ -88,11 +124,11 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      component: scheduler
+      app: scheduler
   template:
     metadata:
       labels:
-        component: scheduler
+        app: scheduler
     spec:
       containers:
         - name: airflow-scheduler
@@ -105,10 +141,15 @@ spec:
           volumeMounts:
             - mountPath: /opt/airflow/dags
               name: dags
+            - mountPath: /opt/airflow/logs
+              name: logs
       volumes:
         - name: dags
           persistentVolumeClaim:
             claimName: airflow-dags-pvc  # 사용할 PVC 이름
+        - name: logs
+          persistentVolumeClaim:
+            claimName: airflow-logs-pvc  # 사용할 PVC 이름
 
 ---
 
