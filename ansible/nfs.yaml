@@ -1,6 +1,12 @@
 - hosts: master
   become: yes
   tasks:
+    - name: Install net-tools
+      ansible.builtin.apt:
+        name: net-tools
+        state: present
+      become: yes
+      
     - name: Install nfs-kernel-server
       apt:
         name: nfs-kernel-server
