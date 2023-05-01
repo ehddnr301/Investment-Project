@@ -1,5 +1,9 @@
 # Investment-Project
 
+## 2023-04-26
+
+- Airflow task간 데이터를 주고받을 volume을 추가하였습니다.
+
 ## 2023-04-24
 
 - Airflow logs directory가 volume mount되지 않으니 webserver에서 log확인이 되지않아 volume 및 nfs 추가하였습니다.
