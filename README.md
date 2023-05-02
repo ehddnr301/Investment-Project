@@ -1,5 +1,10 @@
 # Investment-Project
 
+## 2023-05-01 ~ 2023-05-03
+
+- Airflow task간 데이터를 주고받을 volume을 추가하였는데 해당 내용을 위한 ansible-playbook yaml내용을 추가하였습니다.
+- Airflow Sample dag을 작성하였습니다. (Hard Code)
+
 ## 2023-04-26
 
 - Airflow task간 데이터를 주고받을 volume을 추가하였습니다.
