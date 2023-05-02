@@ -26,6 +26,14 @@
         line: "/home/dongwook.test9/Investment-Project/src/airflow/logs *(rw,sync,no_subtree_check)"
         state: present
 
+
+    - name: Add export configuration
+      become: true
+      lineinfile:
+        path: /etc/exports
+        line: "/home/dongwook.test9/Investment-Project/src/airflow/data *(rw,sync,no_subtree_check)"
+        state: present
+
     - name: Restart nfs-kernel-server
       become: true
       service:
