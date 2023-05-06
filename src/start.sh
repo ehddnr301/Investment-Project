@@ -8,8 +8,8 @@ kubectl apply -f ticker/ticker.yaml
 
 kubectl apply -f opensearch_dashboard/open_dashboard.yaml
 
-bash postgresql/create_secret.sh
+cd postgresql && bash create_secret.sh && cd ..
 
 kubectl apply -f postgresql/postgresql.yaml
 
-bash airflow/apply_airflow.sh
+cd airflow && bash edit_directory_permission.sh && bash apply_airflow.sh
