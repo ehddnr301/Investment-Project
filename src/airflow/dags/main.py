@@ -7,11 +7,12 @@ from datetime import datetime, timedelta
 import pandas as pd
 from sqlalchemy import create_engine
 from airflow.decorators import dag, task
-from airflow.utils.dates import days_ago
+from airflow.utils.trigger_rule import TriggerRule
+
 
 default_args = {
     "owner": "airflow",
-    "start_date": datetime(2023, 4, 25),
+    "start_date": datetime(2023, 5, 7),
     "email_on_failure": False,
     "email_on_retry": False,
     "retries": 1,
@@ -21,34 +22,38 @@ default_args = {
 
 @dag(
     default_args=default_args,
-    schedule_interval="0 1 * * *",
+    schedule_interval="0 * * * *",
     catchup=False,
     description="Opensearch To postgresql",
-    dag_id="opensearch_to_postgresql",
+    dag_id="opensearch_data_to_postgresql",
 )
-def opensearch_to_postgresql():
+def opensearch_to_postgresql(
+    opensearch_url: str = "http://opensearch-service:9200",
+    postgres_url: str = "postgresql+psycopg2://postgres:postgres@postgres-service/postgres",
+    index: str = "ticker",
+    table_name: str = "bronze_ticker",
+    start_datetime: str = str(datetime.now() - timedelta(hours=2))[:13] + ":00:00",
+    end_datetime: str = str(datetime.now() - timedelta(hours=1))[:13] + ":00:00",
+):
     @task()
-    def search_ticker_data() -> pd.DataFrame:
-        host = "http://opensearch-service:9200"
-        index = "ticker"
-        start_date = (datetime.now() - timedelta(days=1)).date()
-        end_date = datetime.now().date()
-        # unix_time_start_date = time.mktime(start_date.timetuple()) * 1000
-        # unix_time_end_date = time.mktime(end_date.timetuple()) * 1000
-
+    def opensearch_to_parquet(
+        opensearch_url: str, index: str, start_datetime: str, end_datetime: str
+    ):
+        start_datetime = datetime.strptime(start_datetime, "%Y-%m-%d %H:%M:%S")
+        end_datetime = datetime.strptime(end_datetime, "%Y-%m-%d %H:%M:%S")
         query = {
             "query": {
                 "range": {
                     "datetime": {
-                        "gte": str(start_date.isoformat()),
-                        "lt": str(end_date.isoformat()),
+                        "gte": str(start_datetime.isoformat()),
+                        "lt": str(end_datetime.isoformat()),
                     }
                 }
             },
             "size": 10000,
         }
 
-        scroll_url = f"{host}/{index}/_search?scroll=1m"
+        scroll_url = f"{opensearch_url}/{index}/_search?scroll=1m"
         headers = {"Content-Type": "application/json"}
         response = requests.post(scroll_url, headers=headers, data=json.dumps(query))
 
@@ -61,7 +66,7 @@ def opensearch_to_postgresql():
 
         while hits:
             results += [hit["_source"] for hit in hits]
-            scroll_url = f"{host}/_search/scroll"
+            scroll_url = f"{opensearch_url}/_search/scroll"
             data = {"scroll": "1m", "scroll_id": scroll_id}
             headers = {"Content-Type": "application/json"}
             response = requests.post(scroll_url, headers=headers, data=json.dumps(data))
@@ -71,32 +76,69 @@ def opensearch_to_postgresql():
             except:
                 break
 
-        try:
-            df = pd.DataFrame(results)
-            if not os.path.exists("/opt/airflow/data"):
-                os.makedirs("/opt/airflow/data")
-            df.to_parquet("/opt/airflow/data/ticker.parquet", index=False)
-            return True
-        except Exception as e:
-            print(e)
-            return False
-
-    @task()
-    def insert_data_to_postgresql(
-        is_success: bool,
-    ):
-        if not is_success:
-            return
-        engine = create_engine(
-            "postgresql+psycopg2://postgres:postgres@postgres-service/postgres"
+        df = pd.DataFrame(results)
+        if not os.path.exists("/opt/airflow/data"):
+            os.makedirs("/opt/airflow/data")
+        df.to_parquet(
+            f"/opt/airflow/data/{index}_{str(start_datetime)}_{str(end_datetime)}.parquet",
+            index=False,
         )
-        df = pd.read_parquet(f"/opt/airflow/data/ticker.parquet")
-        df.to_sql("ticker", engine, if_exists="append", index=False)
-        return "Done"
+        return True
 
-    is_success = search_ticker_data()
+    @task(trigger_rule=TriggerRule.ALL_SUCCESS)
+    def delete_exist_data(
+        postgres_url: str, table_name: str, start_datetime: str, end_datetime: str
+    ):
+        start_datetime = datetime.strptime(start_datetime, "%Y-%m-%d %H:%M:%S")
+        end_datetime = datetime.strptime(end_datetime, "%Y-%m-%d %H:%M:%S")
+        start_unix_datetime = time.mktime(start_datetime.timetuple()) * 1000
+        end_unix_datetime = time.mktime(end_datetime.timetuple()) * 1000
 
-    insert_data_to_postgresql(is_success)
+        engine = create_engine(postgres_url)
+
+        delete_query = f"""
+            DELETE FROM {table_name}
+            WHERE datetime >= {start_unix_datetime}
+            AND datetime <= {end_unix_datetime}
+        """
+
+        with engine.begin() as conn:
+            conn.execute(delete_query)
+
+    @task(trigger_rule=TriggerRule.ALL_SUCCESS)
+    def insert_data_to_postgresql(
+        postgres_url: str,
+        table_name: str,
+        index: str,
+        start_datetime: str,
+        end_datetime: str,
+    ):
+        start_datetime = datetime.strptime(start_datetime, "%Y-%m-%d %H:%M:%S")
+        end_datetime = datetime.strptime(end_datetime, "%Y-%m-%d %H:%M:%S")
+
+        engine = create_engine(postgres_url)
+        df = pd.read_parquet(
+            f"/opt/airflow/data/{index}_{str(start_datetime)}_{str(end_datetime)}.parquet"
+        )
+        df.to_sql(table_name, engine, if_exists="append", index=False)
+        return "Successfully to_sql postgresql"
+
+    data_to_file = opensearch_to_parquet(
+        opensearch_url, index, start_datetime, end_datetime
+    )
+
+    delete_db_data = delete_exist_data(
+        postgres_url,
+        table_name,
+        start_datetime,
+        end_datetime,
+    )
+
+    insert_to_db = insert_data_to_postgresql(
+        postgres_url, table_name, index, start_datetime, end_datetime
+    )
+
+    data_to_file >> delete_db_data >> insert_to_db
 
 
 opensearch_to_postgresql_dag = opensearch_to_postgresql()
