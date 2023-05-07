@@ -1,5 +1,14 @@
 # Investment-Project
 
+## 2023-05-07
+
+<img src="./static/Airflow_dag.png" width="40%" />
+
+- Airflow 간단한 Data Pipeline 관련 Dag을 작성하였습니다.
+- 1. OpenSearch에서 2시간전~1시간전 까지 데이터를 읽어 Parquet 형식으로 데이터를 저장합니다.
+- 2. 읽은 Datatime범위에 대해 postgresql에서 테이블의 데이터를 삭제합니다.
+- 3. Postgresql에 Insert 합니다.
+
 ## 2023-05-01 ~ 2023-05-03
 
 - Airflow task간 데이터를 주고받을 volume을 추가하였는데 해당 내용을 위한 ansible-playbook yaml내용을 추가하였습니다.
