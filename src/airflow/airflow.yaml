@@ -14,20 +14,20 @@ spec:
     spec:
       initContainers:
       - name: airflow-db-init
-        image: apache/airflow:2.4.1-python3.8
+        image: ehddnr/airflow:1.0.0
         command: ["airflow", "db", "init"]
         env:
         - name: AIRFLOW__CORE__SQL_ALCHEMY_CONN
           value: "postgresql+psycopg2://postgres:postgres@postgres-service:5432/postgres"
       - name: airflow-users-create
-        image: apache/airflow:2.4.1-python3.8
+        image: ehddnr/airflow:1.0.0
         command: ["airflow", "users", "create", "-u", "admin", "-p", "admin", "-r", "Admin", "-e", "admin@admin.com", "-f", "admin", "-l", "admin"]
         env:
         - name: AIRFLOW__CORE__SQL_ALCHEMY_CONN
           value: "postgresql+psycopg2://postgres:postgres@postgres-service:5432/postgres"
       containers:
         - name: airflow-webserver
-          image: apache/airflow:2.4.1-python3.8
+          image: ehddnr/airflow:1.0.0
           ports:
             - name: web
               containerPort: 8080
@@ -75,7 +75,7 @@ spec:
     spec:
       containers:
         - name: airflow-scheduler
-          image: apache/airflow:2.4.1-python3.8
+          image: ehddnr/airflow:1.0.0
           env:
             - name: AIRFLOW__CORE__SQL_ALCHEMY_CONN
               value: "postgresql+psycopg2://postgres:postgres@postgres-service:5432/postgres"
