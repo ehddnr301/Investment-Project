@@ -1,0 +1,56 @@
+# minio.yaml의 첫번재 오브젝트
+# deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mlflow
+spec:
+  selector:
+    matchLabels:
+      app: mlflow
+  template:
+    metadata:
+      labels:
+        app: mlflow
+    spec:
+      containers:
+      - name: mlflow
+        # 미리 생성해 둔 mlflow image를 사용합니다.
+        image: ehddnr/mlflow:1.0.2
+        imagePullPolicy: Always
+        # args로 배포할 포트와 호스트, backend-store등을 넣습니다.
+        command: ["mlflow", "server"]
+        args:
+        - "--host=0.0.0.0"
+        - "--port=5000"
+        - "--backend-store-uri=postgresql://postgres:postgres@postgres-service:5432/mlflow"
+        - "--default-artifact-root=s3://test/"
+        # 환경 변수로 minio에 대한 정보를 넣습니다.
+        env:
+        - name: MLFLOW_S3_ENDPOINT_URL
+          value: http://minio-service:9000/
+        - name: AWS_ACCESS_KEY_ID
+          value: "test_access_key"
+        - name: AWS_SECRET_ACCESS_KEY
+          value: "test_secret_key"
+        # 5000번 포트로 노출합니다.
+        ports:
+        - name: http
+          containerPort: 5000
+          protocol: TCP
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: mlflow-service
+spec:
+  type: NodePort
+  selector:
+    app: mlflow
+  ports:
+    - name: http
+      port: 5000
+      targetPort: 5000
+      nodePort: 30083
