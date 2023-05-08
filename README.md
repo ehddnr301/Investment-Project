@@ -1,5 +1,12 @@
 # Investment-Project
 
+## 2023-05-08
+
+- ML, DL 등 모델 활용을 위해 airflow image에 torch와 sklearn을 추가해두었습니다. (미정)
+- Model 학습 후 Model Registry 를 위해 MLflow 추가하였습니다.
+    - Model File은 Minio와 연동하여 사용 (Minio가 쓸 directory를 ansible로 작업 예정)
+
+
 ## 2023-05-07
 
 <img src="./static/Airflow_dag.png" width="40%" />
