@@ -16,7 +16,7 @@ spec:
       containers:
       - name: mlflow
         # 미리 생성해 둔 mlflow image를 사용합니다.
-        image: ehddnr/mlflow:1.0.2
+        image: ehddnr/mlflow:1.1.0
         imagePullPolicy: Always
         # args로 배포할 포트와 호스트, backend-store등을 넣습니다.
         command: ["mlflow", "server"]
@@ -30,9 +30,9 @@ spec:
         - name: MLFLOW_S3_ENDPOINT_URL
           value: http://minio-service:9000/
         - name: AWS_ACCESS_KEY_ID
-          value: "test_access_key"
+          value: "test_user_id"
         - name: AWS_SECRET_ACCESS_KEY
-          value: "test_secret_key"
+          value: "test_user_password"
         # 5000번 포트로 노출합니다.
         ports:
         - name: http
