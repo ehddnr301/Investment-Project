@@ -1,5 +1,23 @@
 # Investment-Project
 
+## 1차 정리
+
+<img src="./static/Chapter1.png" width="40%" />
+
+- 많은 기능을 구현했다고 생각했는데 되돌아보니 많지도 않은것 같습니다.
+- 이후로는 저장된 모델을 활용해 prediction 및 실제 거래 자동화 등도 시도해보려고 합니다.
+- 물론 해당 작업을 하기전에 우선 Hard Coding된 부분등을 먼저 고쳐나가려 합니다. (보안적인 문제도 있지만 천천히...)
+- 프로젝트를 하면서 이런 부분은 신경써도 되는것 아니야? 라고 이슈로 남겨 지적해주시면 감사하겠습니다.
+- 실제 회사 프로젝트 같은 경우였으면 더 많은 시간, 동료, 책임이 있기에 이 프로젝트보다는 완성도가 높아야 맞습니다..ㅠㅠ
+
+## 2023-05-10
+
+<img src="./static/MLFlow.png" width="40%" />
+
+- 간단한 학습 파이프라인 Dag을 추가하였습니다.
+- 학습을 하게되면 스크린샷과 같이 Parameters, Metric 이 저장되고 Model은 Minio에 저장됩니다.
+- 조금 시간을 잡아먹었던것은 Client Side에서 MLFLOW_S3_ENDPOINT_URL가 없으니까 이상한곳으로 save를 시도하는지 Authentication 관련 에러가 나서 디버깅에 시간을 썼습니다.
+
 ## 2023-05-08
 
 - ML, DL 등 모델 활용을 위해 airflow image에 torch와 sklearn을 추가해두었습니다. (미정)
