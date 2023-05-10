@@ -11,7 +11,7 @@
  
     - name: create .kube directory
       become: yes
-      become_user: dongwook.test0
+      become_user: '{{ ansible_user }}'
       file:
         path: $HOME/.kube
         state: directory
@@ -20,21 +20,14 @@
     - name: copy admin.conf to user's kube config
       copy:
         src: /etc/kubernetes/admin.conf
-        dest: /home/dongwook.test0/.kube/config
+        dest: '/home/{{ ansible_user }}/.kube/config'
         remote_src: yes
-        owner: dongwook.test0
+        owner: '{{ ansible_user }}'
 
     - name: install Pod network
       become: yes
-      become_user: dongwook.test0
+      become_user: '{{ ansible_user }}'
       shell: kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml >> pod_network_setup.txt
       args:
         chdir: $HOME
         creates: pod_network_setup.txt
-    # - name: install Pod network
-    #   become: yes
-    #   become_user: dongwook.test0
-    #   shell: kubectl apply -f https://docs.projectcalico.org/v3.8/manifests/calico.yaml >> pod_network_setup.txt
-    #   args:
-    #     chdir: $HOME
-    #     creates: pod_network_setup.txt

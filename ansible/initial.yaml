@@ -1,11 +1,18 @@
 - hosts: all
   become: yes
   tasks:
-    - name: create the 'dongwook' user
-      user: name=dongwook.test0 append=yes state=present createhome=yes shell=/bin/bash
+    - name: create the '{{ ansible_user }}' user
+      user: name={{ ansible_user }} append=yes state=present createhome=yes shell=/bin/bash
  
-    - name: allow 'dongwook.test0' to have passwordless sudo
+    - name: allow '{{ ansible_user }}' to have passwordless sudo
       lineinfile:
         dest: /etc/sudoers
-        line: 'dongwook.test0 ALL=(ALL) NOPASSWD: ALL'
+        line: '{{ ansible_user }} ALL=(ALL) NOPASSWD: ALL'
         validate: 'visudo -cf %s'
+
+    - name: Clone a github repository
+      git:
+        repo: '{{ repo_url }}'
+        dest: '/home/{{ ansible_user }}/'
+        clone: yes
+        update: yes
