@@ -1,22 +1,18 @@
 data "template_file" "ssh_key" {
-  template = "${file("~/rt.pub")}"
+  template = file("${path.module}/assets/my_key.pub")
 }
 
-variable "iam_user_name" {
-  type        = string
-  default     = "dongwook.test0"
-}
 provider "google" {
-  project     = "zinc-citron-377504"
+  project     = var.my_project_id
   region      = "us-west4-b"
   zone        = "us-west4-b"
-  credentials = file("${path.module}/zinc-citron-377504-4b465c7c2086.json")
+  credentials = file("${path.module}/assets/${var.my_project_id}.json")
 }
 
 resource "google_compute_instance" "vm_instance" {
   count       = 3
   name        = "terraform-instance-${count.index}"
-  machine_type = "e2-highcpu-4"
+  machine_type = "e2-standard-2"
 
   boot_disk {
     initialize_params {
@@ -37,5 +33,5 @@ resource "google_compute_instance" "vm_instance" {
 }
 
 output "MYOUTPUT" {
-  value = "${data.template_file.ssh_key.rendered}"
+  value = data.template_file.ssh_key.rendered
 }

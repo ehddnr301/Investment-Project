@@ -1,6 +1,6 @@
 # Investment-Project
 
-## 1차 회고
+## 1차 회고 (2023-05-10)
 
 <img src="./static/Chapter1.png" width="40%" />
 
@@ -11,6 +11,18 @@
 - 물론 해당 작업을 하기전에 우선 Hard Coding된 부분등을 먼저 고쳐나가려 합니다. (보안적인 문제도 있지만 천천히...)
 - 프로젝트를 하면서 이런 부분은 신경써도 되는것 아니야? 라고 이슈로 남겨 지적해주시면 감사하겠습니다.
 - 실제 회사 프로젝트 같은 경우였으면 더 많은 시간, 동료, 책임이 있기에 이 프로젝트보다는 완성도가 높아야 맞습니다..ㅠㅠ
+
+## 2023-05-10
+
+- tf 파일들의 재사용성을 높이려 하였습니다.
+- terraform/terraform.tfvars 파일을 생성하여 아래 3개의 값을 설정합니다.
+```
+iam_user_name="my_google_user"
+my_project_id="my_project_id-320492"
+my_ssh_key="my_ssh_key_filename"
+```
+- static folder 아래에 my_project_id에 등록한 파일명을 가진 google credential 파일을 위치시킵니다.
+- static folder 아래에 내 ssh key를 생성하여 위치시킵니다.
 
 ## 2023-05-10
 
