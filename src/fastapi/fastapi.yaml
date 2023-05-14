@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fastapi
+spec:
+  selector:
+    matchLabels:
+      app: fastapi
+  template:
+    metadata:
+      labels:
+        app: fastapi
+    spec:
+      containers:
+      - name: fastapi
+        image: ehddnr/fastapi:1.0.0
+        imagePullPolicy: Always
+        env:
+        - name: MLFLOW_S3_ENDPOINT_URL
+          value: http://minio-service:9000/
+        - name: AWS_ACCESS_KEY_ID
+          value: "test_user_id"
+        - name: AWS_SECRET_ACCESS_KEY
+          value: "test_user_password"
+        - name: DB_USER
+          value: "postgres"
+        - name: DB_PASSWD
+          value: "postgres"
+        - name: DB_HOST
+          value: "postgres-service"
+        - name: DB_PORT
+          value: "5432"
+        - name: DB_NAME
+          value: "mlflow"
+        - name: MLFLOW_URI
+          value: "http://mlflow-service:5000"
+        ports:
+        - name: http
+          containerPort: 8000
+          protocol: TCP
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: fastapi-service
+spec:
+  type: NodePort
+  selector:
+    app: fastapi
+  ports:
+    - name: http
+      port: 8000
+      targetPort: 8000
+      nodePort: 30084
