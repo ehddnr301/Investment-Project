@@ -12,6 +12,19 @@
 - 프로젝트를 하면서 이런 부분은 신경써도 되는것 아니야? 라고 이슈로 남겨 지적해주시면 감사하겠습니다.
 - 실제 회사 프로젝트 같은 경우였으면 더 많은 시간, 동료, 책임이 있기에 이 프로젝트보다는 완성도가 높아야 맞습니다..ㅠㅠ
 
+## 2023-05-14
+
+<div style="display:flex; width:100%">
+    <img src="./static/FastAPIRequest.png" width="50%" style="margin-right:15px" />
+    <img src="./static/FastAPIResponse.png" width="50%" />
+</div>
+
+- Model Serving을 위한 FastAPI를 추가하였습니다.
+- 현재는 Production Model 을 Load 해서 예측합니다.
+- Production Model을 제일 좋은 성능을 가진 모델로 등록하는 방법도 존재하므로 Airflow쪽 코드에 추가할 가능성이 있습니다.
+- 모든 모델을 다 Load해서 Prediction을 진행해서 Voting하는 방법도 존재하므로 FastAPI쪽에 코드를 추가할 가능성이 있습니다.
+- (Airflow train Dag이 수정되었습니다. - 1분간격으로 Aggregation을 하여 train data 생성)
+
 ## 2023-05-10
 
 - tf 파일들의 재사용성을 높이려 하였습니다.
