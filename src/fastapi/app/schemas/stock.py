@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, List
 
 from pydantic import BaseModel
 
@@ -21,4 +21,7 @@ class StockTsRecv(BaseModel):
 
 
 class StockTsResp(BaseModel):
-    next_average_price: int
+    next_average_price: List[float]
+
+    class Config:
+        schema_extra = {"example": {"next_average_price": [2441578.58370037]}}

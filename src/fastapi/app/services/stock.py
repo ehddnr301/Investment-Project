@@ -16,6 +16,6 @@ def predict_stock(model_name: str, ts: Dict) -> float:
     )
 
     # Create Result
-    pred_result = model.predict(df)
+    pred_result = model.predict(df).tolist()
 
     return pred_result
