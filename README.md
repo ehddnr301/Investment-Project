@@ -12,6 +12,16 @@
 - 프로젝트를 하면서 이런 부분은 신경써도 되는것 아니야? 라고 이슈로 남겨 지적해주시면 감사하겠습니다.
 - 실제 회사 프로젝트 같은 경우였으면 더 많은 시간, 동료, 책임이 있기에 이 프로젝트보다는 완성도가 높아야 맞습니다..ㅠㅠ
 
+## 2023-05-18
+
+<img src="./static/Streamlit.png" width="40%" />
+
+- FastAPI Response Schema가 return 형태가 단일 float 에서 변경해서 list로 리턴하도록 하였습니다.
+- 간단한 Streamlit 코드를 작성하여 모델 시각화를 진행합니다.
+    - Production Model 자체가 등록된지 오래되다 보니 제대로 예측을 수행하지 못하는듯한 모습을 보입니다.
+    - 더 다양한 Model을 Load하여 잘 예측할 수 있는 시나리오를 작성할 필요를 느낍니다.
+    - EX - Voting / Best Score Model Use ...
+
 ## 2023-05-14
 
 <div style="display:flex; width:100%">
