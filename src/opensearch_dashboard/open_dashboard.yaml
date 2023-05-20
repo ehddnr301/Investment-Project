@@ -19,9 +19,15 @@ spec:
         - containerPort: 5601
         env:
         - name: OPENSEARCH_HOSTS
-          value: "http://opensearch-service:9200"
+          valueFrom:
+            secretKeyRef:
+              name: opendash-borad-secret
+              key: opensearch-hosts
         - name: DISABLE_SECURITY_DASHBOARDS_PLUGIN
-          value: "true"
+          valueFrom:
+            secretKeyRef:
+              name: opendash-borad-secret
+              key: disable_security_dashboard_plugin
 ---
 apiVersion: v1
 kind: Service

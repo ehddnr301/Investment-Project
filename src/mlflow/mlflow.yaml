@@ -23,16 +23,35 @@ spec:
         args:
         - "--host=0.0.0.0"
         - "--port=5000"
-        - "--backend-store-uri=postgresql://postgres:postgres@postgres-service:5432/mlflow"
+        - "--backend-store-uri=postgresql://$(DB_USER):$(DB_PASSWORD)@postgres-service:5432/mlflow"
         - "--default-artifact-root=s3://test/"
         # 환경 변수로 minio에 대한 정보를 넣습니다.
         env:
         - name: MLFLOW_S3_ENDPOINT_URL
-          value: http://minio-service:9000/
+          valueFrom:
+            secretKeyRef:
+              name: mlflow-secret
+              key: mlflow-s3-endpoint-url
         - name: AWS_ACCESS_KEY_ID
-          value: "test_user_id"
+          valueFrom:
+            secretKeyRef:
+              name: mlflow-secret
+              key: aws-access-key-id
         - name: AWS_SECRET_ACCESS_KEY
-          value: "test_user_password"
+          valueFrom:
+            secretKeyRef:
+              name: mlflow-secret
+              key: aws-secret-access-key
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: db-secret
+              key: db-user
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: db-secret
+              key: db-password
         # 5000번 포트로 노출합니다.
         ports:
         - name: http

@@ -17,15 +17,30 @@ spec:
         imagePullPolicy: Always
         env:
         - name: MLFLOW_S3_ENDPOINT_URL
-          value: http://minio-service:9000/
+          valueFrom:
+            secretKeyRef:
+              name: mlflow-secret
+              key: mlflow-s3-endpoint-url
         - name: AWS_ACCESS_KEY_ID
-          value: "test_user_id"
+          valueFrom:
+            secretKeyRef:
+              name: mlflow-secret
+              key: aws-access-key-id
         - name: AWS_SECRET_ACCESS_KEY
-          value: "test_user_password"
+          valueFrom:
+            secretKeyRef:
+              name: mlflow-secret
+              key: aws-secret-access-key
         - name: DB_USER
-          value: "postgres"
+          valueFrom:
+            secretKeyRef:
+              name: db-secret
+              key: db-user
         - name: DB_PASSWD
-          value: "postgres"
+          valueFrom:
+            secretKeyRef:
+              name: db-secret
+              key: db-password
         - name: DB_HOST
           value: "postgres-service"
         - name: DB_PORT
