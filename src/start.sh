@@ -12,7 +12,7 @@ kubectl apply -f opensearch_dashboard/open_dashboard.yaml
 
 kubectl apply -f postgresql/postgresql.yaml
 
-sleep 10
+sleep 10;
 
 cd minio && bash apply_minio.sh && cd ..
 

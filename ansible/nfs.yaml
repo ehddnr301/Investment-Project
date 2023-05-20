@@ -26,12 +26,18 @@
         line: "/home/{{ ansible_user }}/Investment-Project/src/airflow/logs *(rw,sync,no_subtree_check)"
         state: present
 
-
     - name: Add export configuration
       become: true
       lineinfile:
         path: /etc/exports
         line: "/home/{{ ansible_user }}/Investment-Project/src/airflow/data *(rw,sync,no_subtree_check)"
+        state: present
+
+    - name: Add export configuration
+      become: true
+      lineinfile:
+        path: /etc/exports
+        line: "/home/{{ ansible_user }}/Investment-Project/src/minio *(rw,sync,no_subtree_check)"
         state: present
 
     - name: Restart nfs-kernel-server
