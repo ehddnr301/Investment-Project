@@ -1,7 +1,5 @@
 #!/bin/bash
 
-sudo chmod 777 -R minio/
-
 bash start_secret.sh
 
 kubectl create configmap fluentd-config --from-file=fluentd/fluent.conf
