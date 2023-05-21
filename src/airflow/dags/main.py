@@ -81,6 +81,10 @@ def opensearch_to_postgresql(
         df = pd.DataFrame(results)
         if not os.path.exists("/opt/airflow/data"):
             os.makedirs("/opt/airflow/data")
+            
+        if df.empty:
+            return False
+        
         df.to_parquet(
             f"/opt/airflow/data/{index}_{str(start_datetime)}_{str(end_datetime)}.parquet",
             index=False,
