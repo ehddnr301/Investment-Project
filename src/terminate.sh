@@ -15,3 +15,5 @@ kubectl delete -f mlflow/mlflow.yaml
 kubectl delete -f minio/minio.yaml
 
 kubectl delete -f streamlit/streamlit.yaml
+
+kubectl delete -f airflow/airflow.yaml
