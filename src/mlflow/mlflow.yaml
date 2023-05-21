@@ -23,7 +23,7 @@ spec:
         args:
         - "--host=0.0.0.0"
         - "--port=5000"
-        - "--backend-store-uri=postgresql://$(DB_USER):$(DB_PASSWORD)@postgres-service:5432/mlflow"
+        - "--backend-store-uri=postgresql://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@postgres-service:5432/mlflow"
         - "--default-artifact-root=s3://test/"
         # 환경 변수로 minio에 대한 정보를 넣습니다.
         env:
