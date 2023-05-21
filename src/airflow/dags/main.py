@@ -6,6 +6,8 @@ from datetime import datetime, timedelta
 
 import pandas as pd
 from sqlalchemy import create_engine
+from sqlalchemy import inspect
+
 from airflow.decorators import dag, task
 from airflow.utils.trigger_rule import TriggerRule
 
@@ -95,6 +97,12 @@ def opensearch_to_postgresql(
         end_unix_datetime = time.mktime(end_datetime.timetuple()) * 1000
 
         engine = create_engine(postgres_url)
+        inspector = inspect(engine)
+
+        is_table_exists = inspector.has_table(table_name)
+
+        if not is_table_exists:
+            return
 
         delete_query = f"""
             DELETE FROM {table_name}
