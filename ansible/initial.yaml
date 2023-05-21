@@ -16,3 +16,16 @@
         dest: '/home/{{ ansible_user }}//Investment-Project'
         clone: yes
         update: yes
+      become_user: '{{ ansible_user }}'
+
+    - name: Creates Minio Bucket directory
+      file:
+        path: '/home/{{ ansible_user }}//Investment-Project/src/minio/test'
+        state: directory
+
+    - name: Set Minio directory permissions
+      file:
+        path: '/home/{{ ansible_user }}//Investment-Project/src/minio'
+        state: directory
+        recurse: yes
+        mode: "0777"
