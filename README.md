@@ -12,6 +12,13 @@
 - 프로젝트를 하면서 이런 부분은 신경써도 되는것 아니야? 라고 이슈로 남겨 지적해주시면 감사하겠습니다.
 - 실제 회사 프로젝트 같은 경우였으면 더 많은 시간, 동료, 책임이 있기에 이 프로젝트보다는 완성도가 높아야 맞습니다..ㅠㅠ
 
+## 2023-05-21
+
+- k8s배포 mlflow.yaml 에서 환경변수를 잘못쓰고 있던것을 수정했습니다.
+- ansible playbook 에서 github clone시에 owner를 수정했습니다. + minio bucket directory를 미리 생성해두었습니다.
+- airflow data pipeline에 delete task 부분이 조금 수정되었습니다.
+- start.sh & terminate.sh 수정이 있었습니다. (start.sh의 sleep은 image pulling을 한번에 하니 지나치게 시간이 오래걸려 추가하였습니다.)
+
 ## 2023-05-20
 
 - K8s 배포 yaml에 secret을 사용하도록 수정하였습니다.
