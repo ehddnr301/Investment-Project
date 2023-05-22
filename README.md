@@ -1,5 +1,14 @@
 # Investment-Project
 
+## 2차 정리 (2023-05-22)
+
+<img src="./static/Chapter2.png" width="40%" />
+
+- 1차 회고 이후로 추가된 부분은 크게는 FastAPI, Streamlit 부분입니다.
+- 이후로는 추가 데이터 적재, 모델학습 방법 다양화 (Spark, DeltaLake...) 등을 시도해보면 좋겠습니다.
+- [How to Start Investment-Project (Command)](#how-to-start-investment-project-command) 부분이 문서에 추가되었습니다.
+    - Hands-On 해보시면서 미흡한점 `Issue`로 남겨주시면 수정하겠습니다.
+
 ## 1차 회고 (2023-05-10)
 
 <img src="./static/Chapter1.png" width="40%" />
@@ -8,9 +17,62 @@
 - 많은 기능을 구현했다고 생각했는데 되돌아보니 많지도 않은것 같습니다.
 - 이후로는 저장된 모델을 활용해 prediction 및 실제 거래 자동화 등도 시도해보려고 합니다.
     - 더 많은 데이터 적재, 학습 최적화 자동화, BI툴 연결 등등등....
-- 물론 해당 작업을 하기전에 우선 Hard Coding된 부분등을 먼저 고쳐나가려 합니다. (보안적인 문제도 있지만 천천히...)
+- 물론 해당 작업을 하기전에 우선 Hard Coding된 부분등을 먼저 고쳐나가려 합니다.
 - 프로젝트를 하면서 이런 부분은 신경써도 되는것 아니야? 라고 이슈로 남겨 지적해주시면 감사하겠습니다.
-- 실제 회사 프로젝트 같은 경우였으면 더 많은 시간, 동료, 책임이 있기에 이 프로젝트보다는 완성도가 높아야 맞습니다..ㅠㅠ
+
+## How to Start Investment-Project (Command)
+
+### Terraform
+
+- `cd terraform`
+- `terraform init`
+- `terraform apply -var-file="terraform.tfvars"`
+
+### Ansible
+
+- `cd ansible`
+- `ansible-playbook -i hosts initial.yaml`
+- `ansible-playbook -i hosts kube-dependencies.yaml`
+- `ansible-playbook -i hosts master.yaml`
+- `ansible-playbook -i hosts workers.yaml`
+- `ansible-playbook -i hosts nfs.yaml`
+
+### In-Project
+
+- `cd src`
+- `bash create_env_file.sh`
+- `bash start.sh`
+- 적재 및 학습 파이프라인의 시나리오상 초반부는 실패하지만 이후에는 성공합니다.
+
+## Terraform 준비물
+
+```terraform.tfvars
+iam_user_name = "dwlee"
+my_project_id = "my-project-id-392842"
+```
+- `terraform.tfvars` 파일을 `terraform directory` 아래 생성합니다.
+- [TerraformGuid](https://docs.google.com/presentation/d/1oTTSVRX9fK8sDZ4qC83s2BPVPV-RKry6C4TABuvN360/edit?usp=sharing)
+
+## Ansible 준비물
+
+```ansible.cfg
+[defaults]
+host_key_checking = False
+private_key_file = ~/Investment-Project/terraform/assets/my_key
+remote_user = dwlee
+```
+- `ansible.cfg` 파일을 `ansible directory` 아래 생성합니다.
+
+```hosts
+[masters]
+master ansible_host=11.111.111.237 private_ip=10.111.0.37 ansible_user=dwlee repo_url=https://github.com/ehddnr301/Investment-Project
+
+[workers]
+worker1 ansible_host=11.111.111.254 private_ip=10.111.0.36 ansible_user=dwlee repo_url=https://github.com/ehddnr301/Investment-Project
+worker2 ansible_host=11.111.111.182 private_ip=10.111.0.35 ansible_user=dwlee repo_url=https://github.com/ehddnr301/Investment-Project
+```
+- `hosts` 파일을 `ansible directory` 아래 생성합니다.
+
 
 ## 2023-05-21
 
