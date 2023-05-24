@@ -18,13 +18,19 @@ spec:
         command: ["airflow", "db", "init"]
         env:
         - name: AIRFLOW__CORE__SQL_ALCHEMY_CONN
-          value: "postgresql+psycopg2://postgres:postgres@postgres-service:5432/postgres"
+          valueFrom:
+            secretKeyRef:
+              name: airflow-secret
+              key: airflow-core-sql-alchemy-conn
       - name: airflow-users-create
         image: ehddnr/airflow:1.1.0
         command: ["airflow", "users", "create", "-u", "admin", "-p", "admin", "-r", "Admin", "-e", "admin@admin.com", "-f", "admin", "-l", "admin"]
         env:
         - name: AIRFLOW__CORE__SQL_ALCHEMY_CONN
-          value: "postgresql+psycopg2://postgres:postgres@postgres-service:5432/postgres"
+          valueFrom:
+            secretKeyRef:
+              name: airflow-secret
+              key: airflow-core-sql-alchemy-conn
       containers:
         - name: airflow-webserver
           image: ehddnr/airflow:1.1.0
@@ -32,8 +38,11 @@ spec:
             - name: web
               containerPort: 8080
           env:
-            - name: AIRFLOW__CORE__SQL_ALCHEMY_CONN
-              value: "postgresql+psycopg2://postgres:postgres@postgres-service:5432/postgres"
+          - name: AIRFLOW__CORE__SQL_ALCHEMY_CONN
+            valueFrom:
+              secretKeyRef:
+                name: airflow-secret
+                key: airflow-core-sql-alchemy-conn
           volumeMounts:
             - mountPath: /opt/airflow/dags
               name: dags
@@ -78,7 +87,25 @@ spec:
           image: ehddnr/airflow:1.1.0
           env:
             - name: AIRFLOW__CORE__SQL_ALCHEMY_CONN
-              value: "postgresql+psycopg2://postgres:postgres@postgres-service:5432/postgres"
+              valueFrom:
+                secretKeyRef:
+                  name: airflow-secret
+                  key: airflow-core-sql-alchemy-conn
+            - name: MLFLOW_S3_ENDPOINT_URL
+              valueFrom:
+                secretKeyRef:
+                  name: mlflow-secret
+                  key: mlflow-s3-endpoint-url
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: mlflow-secret
+                  key: aws-access-key-id
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: mlflow-secret
+                  key: aws-secret-access-key
           args:
             - scheduler
           volumeMounts:

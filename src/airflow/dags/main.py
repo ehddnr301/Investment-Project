@@ -31,7 +31,7 @@ default_args = {
 )
 def opensearch_to_postgresql(
     opensearch_url: str = "http://opensearch-service:9200",
-    postgres_url: str = "postgresql+psycopg2://postgres:postgres@postgres-service/postgres",
+    postgres_url: str = os.getenv("AIRFLOW__CORE__SQL_ALCHEMY_CONN"),
     index: str = "ticker",
     table_name: str = "bronze_ticker",
     start_datetime: str = str(datetime.now() - timedelta(hours=2))[:13] + ":00:00",
@@ -81,10 +81,10 @@ def opensearch_to_postgresql(
         df = pd.DataFrame(results)
         if not os.path.exists("/opt/airflow/data"):
             os.makedirs("/opt/airflow/data")
-            
+
         if df.empty:
             return False
-        
+
         df.to_parquet(
             f"/opt/airflow/data/{index}_{str(start_datetime)}_{str(end_datetime)}.parquet",
             index=False,
@@ -129,9 +129,11 @@ def opensearch_to_postgresql(
         end_datetime = datetime.strptime(end_datetime, "%Y-%m-%d %H:%M:%S")
 
         engine = create_engine(postgres_url)
+
         df = pd.read_parquet(
             f"/opt/airflow/data/{index}_{str(start_datetime)}_{str(end_datetime)}.parquet"
         )
+
         df.to_sql(table_name, engine, if_exists="append", index=False)
         return "Successfully to_sql postgresql"
 

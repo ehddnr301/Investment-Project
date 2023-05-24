@@ -38,9 +38,7 @@ def train_simple_model(
 ):
     @task()
     def read_n_preprocessing_data_task(code_list: list, start_datetime: str):
-        postgres_url = (
-            "postgresql+psycopg2://postgres:postgres@postgres-service/postgres"
-        )
+        postgres_url = os.getenv("AIRFLOW__CORE__SQL_ALCHEMY_CONN")
         start_datetime = datetime.strptime(start_datetime, "%Y-%m-%d %H:%M:%S")
         start_unix_datetime = time.mktime(start_datetime.timetuple()) * 1000
 
@@ -115,9 +113,6 @@ def train_simple_model(
             # MAE 계산
             mae = mean_absolute_error(y_test, y_pred)
 
-            os.environ["AWS_ACCESS_KEY_ID"] = "test_user_id"
-            os.environ["AWS_SECRET_ACCESS_KEY"] = "test_user_password"
-            os.environ["MLFLOW_S3_ENDPOINT_URL"] = "http://minio-service:9000"
             mlflow.set_tracking_uri("http://mlflow-service:5000")
             mlflow.set_experiment(f"ticker_{code}")
             with mlflow.start_run():

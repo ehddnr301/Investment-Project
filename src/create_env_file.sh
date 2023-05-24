@@ -14,3 +14,4 @@ echo "MINIO_SECRET_KEY=test_secret_key" >> minio/.env
 echo "MINIO_ROOT_USER=test_user_id" >> minio/.env
 echo "MINIO_ROOT_PASSWORD=test_user_password" >> minio/.env
 
+echo "AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgresql+psycopg2://postgres:postgres@postgres-service:5432/postgres" >> airflow/.env
