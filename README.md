@@ -1,5 +1,10 @@
 # Investment-Project
 
+## My Project
+
+- 머신러닝 모델을 통한 Trading Bot을 운영함으로써 일하지 않고 돈버는 삶에 도전하려 합니다.
+- 1분에 100원 수익만 내보자는 생각으로 진행하고 있는 프로젝트입니다.
+
 ## Docs
 
 - [프로젝트 시작해보기](./docs/command.md)

@@ -1,5 +1,9 @@
 # Commit History
 
+## 2023-06-28
+
+- Airflow Task 코드를 깔끔하게 작성하기 위해 반복되는 코드를 줄이려 OpenSearch 조회 관련 Class를 작성하였습니다.
+
 ## 2023-05-29
 
 - Metric에 BackTesting한 결과를 추가하였습니다.
