@@ -12,10 +12,12 @@ from airflow.decorators import dag, task
 from airflow.utils.trigger_rule import TriggerRule
 
 from src.opensearch_data import (
-    opensearch_to_parquet,
-    delete_exists_data,
+    opensearch_to_parquet_func,
+    delete_exists_data_func,
     insert_parquet_to_postgresql,
 )
+
+from src.supports.opensearch import OpenSearchRequest
 
 
 default_args = {
@@ -47,13 +49,13 @@ def opensearch_to_postgresql(
     def opensearch_to_parquet(
         opensearch_url: str, index: str, start_datetime: str, end_datetime: str
     ):
-        opensearch_to_parquet(opensearch_url, index, start_datetime, end_datetime)
+        opensearch_to_parquet_func(opensearch_url, index, start_datetime, end_datetime)
 
     @task(trigger_rule=TriggerRule.ALL_SUCCESS)
     def delete_exist_data(
         postgres_url: str, table_name: str, start_datetime: str, end_datetime: str
     ):
-        delete_exists_data(postgres_url, table_name, start_datetime, end_datetime)
+        delete_exists_data_func(postgres_url, table_name, start_datetime, end_datetime)
 
     @task(trigger_rule=TriggerRule.ALL_SUCCESS)
     def insert_data_to_postgresql(
