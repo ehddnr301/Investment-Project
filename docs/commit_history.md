@@ -1,5 +1,10 @@
 # Commit History
 
+## 2023-07-05
+
+- Airflow Dag과 실제 로직을 분리하였습니다.
+- 분리하며 재활용 가능성도 같이 높이면 좋겠지만 우선 Controller와 Service를 분리하는 느낌으로 분리작성하였습니다.
+
 ## 2023-06-28
 
 - Airflow Task 코드를 깔끔하게 작성하기 위해 반복되는 코드를 줄이려 OpenSearch 조회 관련 Class를 작성하였습니다.

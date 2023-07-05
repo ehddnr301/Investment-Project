@@ -7,6 +7,7 @@
 
 ## Docs
 
+- [사용 기술 소개](./docs/tech_stack.md)
 - [프로젝트 시작해보기](./docs/command.md)
 - [커밋 히스토리 따라잡기](./docs/commit_history.md)
 
