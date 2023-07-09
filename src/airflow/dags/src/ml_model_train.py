@@ -128,14 +128,14 @@ def train_model(
         merged_df = pd.merge(code_df, agg_df, how="left", on="datetime2")
 
         # 초기 자본
-        capital = 50000
+        capital = START_MONEY
 
         # 매매 기록을 저장할 리스트
         buy_transactions = []
         MAX_TRADE_TIME = 0
 
         # 백테스팅 전략
-        for index, row in merged_df.iterrows():
+        for _, row in merged_df.iterrows():
             # 구매한 coin 중에 현재 가격이 구매당시 가격보다 0.2퍼센트 이상 상승한 경우 매도
             if len(buy_transactions) > 0:
                 for idx, transaction in enumerate(buy_transactions):
@@ -175,9 +175,9 @@ def train_model(
         mae = mean_absolute_error(y_test[1:], y_pred[:-1])
         metrics = {
             "MAE": mae,
-            "InitialCapital": 50000,
+            "InitialCapital": START_MONEY,
             "EndCapital": capital,
-            "Profit": capital - 50000,
+            "Profit": capital - START_MONEY,
         }
         mlflow.set_tracking_uri("http://mlflow-service:5000")
         mlflow.set_experiment(f"ticker_{code}")
