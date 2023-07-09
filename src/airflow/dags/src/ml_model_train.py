@@ -13,6 +13,11 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_absolute_error
 
 from src.supports.opensearch import OpenSearchRequest
+from src.supports.mlflow import (
+    create_new_mlflow_model,
+    create_model_version,
+    update_registered_model,
+)
 
 
 def read_n_preprocessing_data_func(
@@ -181,7 +186,14 @@ def train_model(
         }
         mlflow.set_tracking_uri("http://mlflow-service:5000")
         mlflow.set_experiment(f"ticker_{code}")
+        MODEL_NAME = f"ticker_model_{code}"
         with mlflow.start_run():
             mlflow.log_params(params)
             mlflow.log_metrics(metrics)
-            mlflow.sklearn.log_model(model, f"ticker_model_{code}")
+            current_model = mlflow.sklearn.log_model(model, MODEL_NAME)
+
+            run_id, model_uri = current_model.run_id, current_model.model_uri
+
+            create_new_mlflow_model(MODEL_NAME)
+            model_version = create_model_version(MODEL_NAME, run_id, model_uri)
+            update_registered_model(MODEL_NAME, model_version, "Profit", "maximize")
