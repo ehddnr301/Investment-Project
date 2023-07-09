@@ -1,5 +1,11 @@
 # Commit History
 
+## 2023-07-09
+
+- 이전: 수동으로 MLFlow 에서 Production Model을 등록하여야 합니다.
+- 현재: Evaluation Metric과 Optimize_method에 따라 Production Model을 업데이트 합니다.
+- 여담으로 이제 대망의 등록된 Production Model을 활용하여 trading bot을 운용하는 부분만 남은것 같습니다.
+
 ## 2023-07-05
 
 - Airflow Dag과 실제 로직을 분리하였습니다.
