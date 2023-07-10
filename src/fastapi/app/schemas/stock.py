@@ -10,7 +10,7 @@ class StockTsRecv(BaseModel):
     class Config:
         schema_extra = {
             "example": {
-                "model_name": "ETH-Model",
+                "model_name": "ticker_model_KRW-ETH",
                 "ticker_data": {
                     "frequent_change": ["RISE"],
                     "average_price": [2.446000e06],

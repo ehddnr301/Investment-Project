@@ -69,7 +69,10 @@ if __name__ == "__main__":
 
         agg_dict = agg_code_df.to_dict("list")
 
-        data = {"model_name": code.split("-")[1] + "-Model", "ticker_data": agg_dict}
+        data = {
+            "model_name": "ticker_model_" + code,
+            "ticker_data": agg_dict,
+        }
 
         response = requests.post(
             "http://fastapi-service:8000/stock/next_average_price",
