@@ -1,5 +1,13 @@
 # Commit History
 
+## 2023-07-16
+
+<img src="../static/StreamlitTrade.png" width="40%" />
+
+- Streamlit에 Back Testing 현황을 보려고 Buy, Sell 표시를 추가하였습니다.
+- 모델성능의 문제로 예측가격이 너무 높게 찍혀서 유의미한 결과가 나오지 않는것 같습니다.
+- 모델 학습 및 저장 로직을 한차례 변경한 후에 다시 시도해보겠습니다.
+
 ## 2023-07-09
 
 - 이전: 수동으로 MLFlow 에서 Production Model을 등록하여야 합니다.
