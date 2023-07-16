@@ -2,7 +2,7 @@
 
 ## 2023-07-16
 
-<img src="../static/StreamlitTrade.png" width="40%" />
+<img src="../static/StreamlitTrade.png" width="50%" />
 
 - Streamlit에 Back Testing 현황을 보려고 Buy, Sell 표시를 추가하였습니다.
 - 모델성능의 문제로 예측가격이 너무 높게 찍혀서 유의미한 결과가 나오지 않는것 같습니다.
