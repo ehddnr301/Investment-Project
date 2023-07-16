@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: streamlit
-        image: ehddnr/streamlit:1.0.0
+        image: ehddnr/streamlit:1.1.0
         imagePullPolicy: Always
         command: ["streamlit", "run", "project/app.py"]
         ports:

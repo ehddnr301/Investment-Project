@@ -6,6 +6,9 @@ import pandas as pd
 import streamlit as st
 from datetime import datetime, timedelta
 
+import matplotlib.pyplot as plt
+
+
 if __name__ == "__main__":
     start_datetime = str(datetime.now() - timedelta(hours=1))
     end_datetime = str(datetime.now())
@@ -54,6 +57,8 @@ if __name__ == "__main__":
     code_list = ["KRW-BTC", "KRW-ETH"]
     for code in code_list:
         code_df = df[df["code"] == code]
+        # if code == "KRW-BTC":
+        #     print(code_df)
 
         code_df = code_df.drop_duplicates(subset=["datetime"], keep="last")
         code_df["datetime2"] = pd.to_datetime(code_df["datetime"], unit="ms")
@@ -73,12 +78,12 @@ if __name__ == "__main__":
             "model_name": "ticker_model_" + code,
             "ticker_data": agg_dict,
         }
-
         response = requests.post(
             "http://fastapi-service:8000/stock/next_average_price",
             headers=headers,
             data=json.dumps(data),
         )
+
         pred_response = pd.DataFrame.from_dict(response.json())
         pred_response.index = agg_code_df.index
         final_df = pd.concat(
@@ -89,6 +94,120 @@ if __name__ == "__main__":
 
         final_df.reset_index(inplace=True)
 
-        st.line_chart(
-            final_df, x="datetime2", y=["average_price", "next_average_price"]
+        # Back Testing Code 넣기
+        merged_df = pd.merge(code_df, pred_response, how="left", on="datetime2")
+        # 초기 자본
+        capital = 50000
+
+        # 매매 기록을 저장할 리스트
+        buy_transactions = []
+        buy_log = []
+        sell_log = []
+        MAX_TRADE_TIME = 0
+        for _, row in merged_df.iterrows():
+            # 구매한 coin 중에 현재 가격이 구매당시 가격보다 0.2퍼센트 이상 상승한 경우 매도
+            if len(buy_transactions) > 0:
+                for idx, transaction in enumerate(buy_transactions):
+                    if transaction["trade_price"] * 1.002 <= row["trade_price"]:
+                        capital += transaction["trade_amount"] * row["trade_price"]
+                        capital -= (
+                            transaction["trade_amount"] * row["trade_price"] * 0.00005
+                        )  # 수수료
+                        sell_log.append(
+                            {
+                                "trade_price": row["trade_price"],  # 판매당시 가격
+                                "trade_amount": transaction[
+                                    "trade_amount"
+                                ],  # 구매 amount
+                                "trade_time": row["datetime"],
+                            }
+                        )
+
+                        del buy_transactions[idx]
+
+            # predict_price보다 현재 거래가격이 낮은경우 & trade_time이 1분이상 지난 경우 최소 거래금액으로 구매
+            if len(buy_transactions) > 0:
+                min_trade_time = max(buy_transactions, key=lambda x: x["trade_time"])
+                MAX_TRADE_TIME = min_trade_time["trade_time"]
+            if (
+                row["trade_price"] < row["next_average_price"]
+                and capital > 5000.25
+                and MAX_TRADE_TIME + (1000 * 60 * 1) < row["datetime"]
+            ):
+                # 현재 가격이 예측 가격보다 낮은 경우 주식을 구매
+                buy_transactions.append(
+                    {
+                        "trade_price": row["trade_price"],  # 구매당시 가격
+                        "trade_amount": 5000 / row["trade_price"],  # 구매 amount
+                        "trade_time": row["datetime"],
+                    }
+                )
+                buy_log.append(
+                    {
+                        "trade_price": row["trade_price"],  # 구매당시 가격
+                        "trade_amount": 5000 / row["trade_price"],  # 구매 amount
+                        "trade_time": row["datetime"],
+                    }
+                )
+                capital -= 5000.25
+
+        # 마지막 가격으로 전부 매도
+        for transaction in buy_transactions:
+            capital += (
+                transaction["trade_amount"] * merged_df.iloc[-1, :]["trade_price"]
+            )
+            sell_log.append(
+                {
+                    "trade_price": row["trade_price"],  # 판매당시 가격
+                    "trade_amount": transaction["trade_amount"],  # 구매 amount
+                    "trade_time": row["datetime"],
+                }
+            )
+
+        # Set Plot
+        plt.style.use("fivethirtyeight")
+        plt.rcParams["figure.figsize"] = (15, 8)
+
+        # buy_log에서 trade_time과 trade_price 추출
+        buy_trade_time = [
+            str(datetime.utcfromtimestamp(item["trade_time"] / 1000))[:-9] + "00"
+            for item in buy_log
+        ]
+        buy_trade_price = [item["trade_price"] for item in buy_log]
+
+        # sell_log에서 trade_time과 trade_price 추출
+        sell_trade_time = [
+            str(datetime.utcfromtimestamp(item["trade_time"] / 1000))[:-9] + "00"
+            for item in sell_log
+        ]
+        sell_trade_price = [item["trade_price"] for item in sell_log]
+
+        # line_chart에 trading 기록 추가
+        fig, ax = plt.subplots()
+        ax.plot(final_df["datetime2"], final_df["average_price"], label="Average Price")
+        ax.plot(
+            final_df["datetime2"],
+            final_df["next_average_price"],
+            label="PredictedPrice",
         )
+        ax.scatter(
+            buy_trade_time,
+            buy_trade_price,
+            marker="^",
+            color="darkblue",
+            label="Buy",
+            s=100,
+        )
+        ax.scatter(
+            sell_trade_time,
+            sell_trade_price,
+            marker="v",
+            color="crimson",
+            label="Sell",
+            s=100,
+        )
+        ax.legend()
+        ax.set_title(f"{code}")
+        ax.set_xlabel("Datetime")
+        ax.set_ylabel("Price")
+        st.pyplot(fig)
