@@ -13,11 +13,9 @@ from airflow.utils.trigger_rule import TriggerRule
 
 from src.opensearch_data import (
     opensearch_to_parquet_func,
-    delete_exists_data_func,
     insert_parquet_to_postgresql,
 )
-
-from src.supports.opensearch import OpenSearchRequest
+from src.etl import delete_exists_data_func
 
 
 default_args = {
